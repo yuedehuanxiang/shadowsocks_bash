@@ -13,8 +13,8 @@ libsodium_ver="libsodium-1.0.16"
 libsodium_url="https://github.com/jedisct1/libsodium/releases/download/1.0.16/libsodium-1.0.16.tar.gz"
 
 #Mbedtls
-mbedtls_ver="mbedtls-2.8.0"
-mbedtls_url="https://tls.mbed.org/download/mbedtls-2.8.0-gpl.tgz"
+mbedtls_ver="mbedtls-2.6.0"
+mbedtls_url="https://tls.mbed.org/download/mbedtls-2.6.0-gpl.tgz"
 
 #Init script
 init_script_url_centos="https://raw.githubusercontent.com/uxh/shadowsocks_bash/master/shadowsocks-libev"
