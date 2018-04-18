@@ -225,7 +225,7 @@ pre_configure(){
             yum-config-manager --enable epel
         fi
         echo -e "${green}Install the EPEL repository complete.${plain}"
-        yum -y install unzip openssl openssl-devel gettext gcc autoconf libtool automake make asciidoc xmlto libev-devel pcre pcre-devel git c-ares-devel
+        yum -y install unzip openssl openssl-devel gettext gcc autoconf libtool automake make libev-devel pcre pcre-devel git c-ares-devel
     elif check_system debian; then
         apt-get update
         apt-get --no-install-recommends -y install gettext build-essential autoconf automake libtool openssl libssl-dev zlib1g-dev libpcre3-dev libev-dev libc-ares-dev
