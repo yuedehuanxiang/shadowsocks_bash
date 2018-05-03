@@ -401,6 +401,13 @@ install(){
     fi
 }
 
+#Modify
+modify(){
+    /etc/init.d/shadowsocks restart
+    install_success
+    qr_link
+}
+
 #Install success
 install_success(){
     clear
@@ -444,6 +451,18 @@ install_shadowsocksr(){
     install_cleanup
 }
 
+#Modify shadowsocksr
+modify_shadowsocksr(){
+    start_info
+    pre_configure
+    config_shadowsocks
+    if check_sys packageManager yum; then
+        set_firewall
+    fi
+    modify
+    install_cleanup
+}
+
 #Uninstall shadowsocksr
 uninstall_shadowsocksr(){
     echo "Continue to uninstall ShadowsocksR? (y/n)"
@@ -472,7 +491,7 @@ uninstall_shadowsocksr(){
 action=$1
 [ -z $1 ] && action=install
 case "$action" in
-    install|uninstall)
+    install|modify|uninstall)
         ${action}_shadowsocksr
         ;;
     *)
