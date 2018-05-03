@@ -48,9 +48,9 @@ tls1.2_ticket_fastauth
 )
 
 #Color
-red='\033[41;37m'
-green='\033[42;37m'
-yellow='\033[43;37m'
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
 plain='\033[0m'
 
 #Make sure root
@@ -342,7 +342,7 @@ set_firewall(){
 
 #Config shadowsocks
 config_shadowsocks(){
-    cat > /etc/shadowsocks.json<<-EOF
+    cat > /etc/shadowsocks.json << EOF
 {
     "server":"0.0.0.0",
     "server_ipv6":"[::]",
@@ -404,14 +404,14 @@ install(){
 #Install success
 install_success(){
     clear
-    echo -e "${green}Success! ShadowsocksR server has been installed!${plain}"
-    echo -e "------------------------------------------------"
-    echo -e "Server IP Address: ${red}$(get_ip)${plain}"
-    echo -e "Server Port      : ${red}${shadowsocksport}${plain}"
-    echo -e "Password         : ${red}${shadowsockspwd}${plain}"
-    echo -e "Protocol         : ${red}${shadowsockprotocol}${plain}"
-    echo -e "Obfs             : ${red}${shadowsockobfs}${plain}"
-    echo -e "Encryption Method: ${red}${shadowsockscipher}${plain}"
+    echo -e "${green}Congratulations, ShadowsocksR server install completed!${plain}"
+    echo -e "------------------------------------------------------------"
+    echo -e "Your Server IP        : \033[41;37m $(get_ip) \033[0m"
+    echo -e "Your Server Port      : \033[41;37m ${shadowsocksport} \033[0m"
+    echo -e "Your Password         : \033[41;37m ${shadowsockspwd} \033[0m"
+    echo -e "Your Protocol         : \033[41;37m ${shadowsockprotocol} \033[0m"
+    echo -e "Your Obfs             : \033[41;37m ${shadowsockobfs} \033[0m"
+    echo -e "Your Encryption Method: \033[41;37m ${shadowsockscipher} \033[0m"
     echo -e "------------------------------------------------"
 }
 
