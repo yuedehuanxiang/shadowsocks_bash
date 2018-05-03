@@ -232,6 +232,63 @@ pre_configure(){
     fi
 }
 
+#Pre configure modify
+pre_configure_modify(){
+    echo "Please Enter Shadowsocks's Password"
+    read -p "(Default: Number123890):" shadowsockspwd
+    [ -z "${shadowsockspwd}" ] && shadowsockspwd="Number123890"
+    echo "-------------------------"
+    echo "Password = ${shadowsockspwd}"
+    echo "-------------------------"
+
+    while true
+    do
+    dport=$(shuf -i 3000-8888 -n 1)
+    echo -e "Please Enter Shadowsocks's Port (1~65535)"
+    read -p "(Default: ${dport}):" shadowsocksport
+    [ -z "$shadowsocksport" ] && shadowsocksport=${dport}
+    expr ${shadowsocksport} + 1 &>/dev/null
+    if [ $? -eq 0 ]; then
+        if [ ${shadowsocksport} -ge 1 ] && [ ${shadowsocksport} -le 65535 ] && [ ${shadowsocksport:0:1} != 0 ]; then
+            echo "-------------------------"
+            echo "Port = ${shadowsocksport}"
+            echo "-------------------------"
+            break
+        fi
+    fi
+    echo -e "${red}Please enter a number between 1 and 65535!${plain}"
+    done
+
+    while true
+    do
+    echo -e "Please Select Shadowsocks's Stream Cipher"
+    for ((i=1;i<=${#ciphers[@]};i++ )); do
+        hint="${ciphers[$i-1]}"
+        echo -e "${i}) ${hint}"
+    done
+    read -p "(Default: ${ciphers[0]}):" pick
+    [ -z "$pick" ] && pick=1
+    expr ${pick} + 1 &>/dev/null
+    if [ $? -ne 0 ]; then
+        echo -e "${red}Please enter a number!${plain}"
+        continue
+    fi
+    if [[ "$pick" -lt 1 || "$pick" -gt ${#ciphers[@]} ]]; then
+        echo -e "${red}Please enter a number between 1 and ${#ciphers[@]}!${plain}"
+        continue
+    fi
+    shadowsockscipher=${ciphers[$pick-1]}
+    echo "-------------------------"
+    echo "Stream Cipher = ${shadowsockscipher}"
+    echo "-------------------------"
+    break
+    done
+
+    echo
+    echo "Press Enter to start...or Press Ctrl+C to cancel"
+    char=`get_char`
+}
+
 #Disable selinux
 disable_selinux(){
     if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
@@ -345,7 +402,7 @@ config_shadowsocks(){
         mkdir -p /etc/shadowsocks-libev
     fi
 
-    cat > /etc/shadowsocks-libev/config.json<<-EOF
+    cat > /etc/shadowsocks-libev/config.json << EOF
 {
     "server":${server_value},
     "server_port":${shadowsocksport},
@@ -427,6 +484,17 @@ install_shadowsocks_libev(){
     install_cleanup
 }
 
+#Modify Shadowsocks-libev
+modify_shadowsocks_libev(){
+    start_information
+    pre_configure_modify
+    set_firewall
+    config_shadowsocks
+    /etc/init.d/shadowsocks restart
+    install_success
+    qr_link
+}
+
 # Uninstall Shadowsocks-libev
 uninstall_shadowsocks_libev(){
     start_information
@@ -472,7 +540,7 @@ uninstall_shadowsocks_libev(){
 action=$1
 [ -z $1 ] && action=install
 case "$action" in
-    install|uninstall)
+    install|modify|uninstall)
         ${action}_shadowsocks_libev
         ;;
     *)
