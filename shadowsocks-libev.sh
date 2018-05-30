@@ -16,6 +16,10 @@ libsodium_url="https://github.com/jedisct1/libsodium/releases/download/1.0.16/li
 mbedtls_ver="mbedtls-2.6.0"
 mbedtls_url="https://tls.mbed.org/download/mbedtls-2.6.0-gpl.tgz"
 
+#Shadowsocks-libev
+shadowsocks_libev_ver="shadowsocks-libev-3.1.3"
+shadowsocks_libev_url="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.1.3/shadowsocks-libev-3.1.3.tar.gz"
+
 #Init script
 init_script_url_centos="https://raw.githubusercontent.com/uxh/shadowsocks_bash/master/shadowsocks-libev"
 init_script_url_debian="https://raw.githubusercontent.com/uxh/shadowsocks_bash/master/shadowsocks-libev-debian"
@@ -120,20 +124,6 @@ get_char(){
     stty $SAVEDSTTY
 }
 
-#Get shadowsocks-libev lastest version
-get_latest_version(){
-    ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/shadowsocks/shadowsocks-libev/releases/latest | grep 'tag_name' | cut -d\" -f4)
-
-    if [ -z ${ver} ]; then
-        echo "${red}Get shadowsocks-libev latest version failed!${plain}"
-        exit 1
-    else
-        shadowsocks_libev_ver="shadowsocks-libev-$(echo ${ver} | sed -e 's/^[a-zA-Z]//g')"
-    fi
-
-    shadowsocks_libev_url="https://github.com/shadowsocks/shadowsocks-libev/releases/download/${ver}/${shadowsocks_libev_ver}.tar.gz"
-}
-
 #Pre configure
 pre_configure(){
     if check_system centos || check_system debian; then
@@ -148,9 +138,7 @@ pre_configure(){
         exit 1
     fi
 
-    if [ ! "$(command -v ss-server)" ]; then
-        get_latest_version
-    else
+    if [ "$(command -v ss-server)" ]; then
         echo -e "${green}Shadowsocks server has already been installed.${plain}"
         exit 0
     fi
