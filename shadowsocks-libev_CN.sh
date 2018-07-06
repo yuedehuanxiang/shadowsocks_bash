@@ -2,20 +2,20 @@
 PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin"
 export PATH
 
-#Github: https://github.com/uxh/shadowsocks_bash
-#Author: https://www.banwagongzw.com & https://www.vultrcn.com
-#Thanks: https://teddysun.com
+#托管：https://github.com/uxh/shadowsocks_bash
+#作者：https://www.banwagongzw.com & https://www.vultrcn.com
+#致谢：https://teddysun.com
 
-#Color
+#设置输出颜色
 red="\033[0;31m"
 green="\033[0;32m"
 yellow="\033[0;33m"
 plain="\033[0m"
 
-#Directory
+#获取当前目录
 currentdir=$(pwd)
 
-#Streamcipher
+#设置加密方式数组
 ciphers=(
 aes-256-gcm
 aes-256-ctr
@@ -26,7 +26,7 @@ chacha20
 rc4-md5
 )
 
-#Version and url
+#环境及程序版本控制
 libsodiumver="libsodium-1.0.16"
 libsodiumurl="https://github.com/jedisct1/libsodium/releases/download/1.0.16/libsodium-1.0.16.tar.gz"
 mbedtlsver="mbedtls-2.11.0"
@@ -35,7 +35,7 @@ shadowsocksver="shadowsocks-libev-3.2.0"
 shadowsocksurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.2.0/shadowsocks-libev-3.2.0.tar.gz"
 initscripturl="https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev"
 
-#Disable selinux
+#禁用 SElinux
 function disable_selinux() {
     if [ -s /etc/selinux/config ] && grep "SELINUX=enforcing" /etc/selinux/config; then
         sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
@@ -43,7 +43,7 @@ function disable_selinux() {
     fi
 }
 
-#Check release
+#检查当前系统类型
 function check_release() {
     local value=$1
     local release="none"
@@ -77,7 +77,7 @@ function check_release() {
     fi
 }
 
-#Check shadowsocks status
+#检查 Shadowsocks 状态
 function check_shadowsocks_status() {
     installedornot="not"
     runningornot="not"
@@ -101,7 +101,7 @@ function check_shadowsocks_status() {
     fi
 }
 
-#Check centos main version
+#检查 CentOS 系统大版本
 function check_centos_main_version() {
     local value=$1
     local version="0.0.0"
@@ -121,7 +121,7 @@ function check_centos_main_version() {
     fi
 }
 
-#Check kernel version
+#检查当前系统内核一
 function check_kernel_version() {
     local kernelversion=$(uname -r | cut -d "-" -f 1)
     local olderversion=$(echo "${kernelversion} 3.7.0" | tr " " "\n" | sort -V | head -n 1)
@@ -132,7 +132,7 @@ function check_kernel_version() {
     fi
 }
 
-#Check kernel headers
+#检查当前系统内核二
 function check_kernel_headers() {
     local nowkernel=$(uname -r)
     if check_release centos; then
@@ -152,7 +152,7 @@ function check_kernel_headers() {
     fi
 }
 
-#Get ipv4
+#获取系统公网 IPv4
 function get_ipv4() {
     local ipv4=$(ip addr | grep -Eo "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | grep -Ev "^192\.168|^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[0-2]\.|^10\.|^127\.|^255\.|^0\." | head -n 1)
     if [ -z ${ipv4} ]; then
@@ -164,7 +164,7 @@ function get_ipv4() {
     echo -e "${ipv4}"
 }
 
-#Get ipv6
+#检查系统公网 IPv6
 function check_ipv6() {
     local ipv6=$(wget -qO- -t 1 -T 10 ipv6.icanhazip.com)
     if [ -z ${ipv6} ]; then
@@ -174,26 +174,26 @@ function check_ipv6() {
     fi
 }
 
-#Set shadowsocks config
+#设置 Shadowsocks 连接信息
 function set_shadowsocks_config() {
     clear
-    echo -e "${green}[Info]${plain} Start set shadowsocks's config information..."
-    echo -e "${green}[Info]${plain} Wherever you are not sure, just press Enter to continue."
+    echo -e "${green}[提示]${plain} 开始配置 Shadowsocks 连接信息"
+    echo -e "${green}[提示]${plain} 不清楚的地方，直接回车采用默认配置即可"
     echo ""
-    echo "Please enter shadowsocks's password"
-    read -p "[Default is Number1433223]:" sspassword
+    echo "请设置 Shadowsocks 的连接密码"
+    read -p "[默认为 Number1433223]：" sspassword
     if [ -z ${sspassword} ]; then
         sspassword="Number1433223"
     fi
     echo "-------------------------------"
-    echo "Shadowsocks's Password: ${sspassword}"
+    echo "连接密码已设置为：${sspassword}"
     echo "-------------------------------"
 
     local defaultport=$(shuf -i 9000-9999 -n 1)
-    echo "Please enter shadowsocks's port (1~65535)"
+    echo "请设置 Shadowsocks 连接端口（1~65535）"
     while true
     do
-        read -p "[Default is ${defaultport}]:" ssport
+        read -p "[默认为 ${defaultport}]：" ssport
         if [ -z ${ssport} ]; then
             ssport=${defaultport}
         fi
@@ -201,18 +201,18 @@ function set_shadowsocks_config() {
         if [ $? -eq 0 ]; then
             if [ ${ssport} -ge 1 ] && [ ${ssport} -le 65535 ]; then
                 echo "-------------------------------"
-                echo "Shadowsocks's Port: ${ssport}"
+                echo "连接端口已设置为：${ssport}"
                 echo "-------------------------------"
                 break
             else
-                echo -e "${red}[Error]${plain} Please enter a number between 1 and 65535!"
+                echo -e "${red}[错误]${plain} 请输入 1 和 65535 之间的数字！"
             fi
         else
-            echo -e "${red}[Error]${plain} Please enter a number between 1 and 65535!"
+            echo -e "${red}[错误]${plain} 请输入 1 和 65535 之间的数字！"
         fi
     done
 
-    echo "Please select shadowsocks's stream cipher"
+    echo "请设置 Shadowsocks 的加密方式"
     for ((i=1;i<=${#ciphers[@]};i++));
     do
         local cipher=${ciphers[$i-1]}
@@ -220,7 +220,7 @@ function set_shadowsocks_config() {
     done
     while true
     do
-        read -p "[Default is ${ciphers[0]}]:" ciphernumber
+        read -p "[默认为 ${ciphers[0]}]：" ciphernumber
         if [ -z ${ciphernumber} ]; then
             ciphernumber="1"
         fi
@@ -229,29 +229,29 @@ function set_shadowsocks_config() {
             if [ ${ciphernumber} -ge 1 ] && [ ${ciphernumber} -le ${#ciphers[@]} ]; then
                 sscipher=${ciphers[${ciphernumber}-1]}
                 echo "-------------------------------"
-                echo "Shadowsocks's Streamcipher: ${sscipher}"
+                echo "加密方式已设置为：${sscipher}"
                 echo "-------------------------------"
                 break
             else
-                echo -e "${red}[Error]${plain} Please enter a number between 1 and ${#ciphers[@]}!"
+                echo -e "${red}[错误]${plain} 请输入 1 和 ${#ciphers[@]} 之间的数字！"
             fi
         else
-            echo -e "${red}[Error]${plain} Please enter a number between 1 and ${#ciphers[@]}!"
+            echo -e "${red}[错误]${plain} 请输入 1 和 ${#ciphers[@]} 之间的数字！"
         fi
     done
 
     echo ""
-    echo "Press Enter to continue...or Press Ctrl+C to cancel"
+    echo "按回车键开始安装...或按 Ctrl+C 键取消"
     read -n 1
 }
 
-#install dependencies
+#安装依赖
 function install_dependencies() {
     if check_release centos; then
         if [ ! -f /etc/yum.repos.d/epel.repo ]; then
             yum install -y epel-release
             if [ $? -ne 0 ]; then
-                echo -e "${red}[Error]${plain} EPEL install failed, please try again!"
+                echo -e "${red}[错误]${plain} EPEL 更新源安装失败，请稍后重试！"
                 exit 1
             fi
         fi
@@ -259,7 +259,7 @@ function install_dependencies() {
         if [ $? -ne 0 ]; then
             yum install -y yum-utils
             if [ $? -ne 0 ]; then
-                echo -e "${red}[Error]${plain} YUM-UTILS install failed, please try again!"
+                echo -e "${red}[错误]${plain} YUM-UTILS 包安装失败，请稍后重试！"
                 exit 1
             fi
         fi
@@ -269,20 +269,20 @@ function install_dependencies() {
         fi
         yum install -y unzip openssl openssl-devel gettext gcc autoconf libtool automake make asciidoc xmlto libev-devel pcre pcre-devel git c-ares-devel
         if [ $? -ne 0 ]; then
-            echo -e "${red}[Error]${plain} Dependencies install failed, please try again!"
+            echo -e "${red}[错误]${plain} 依赖安装失败，请稍后重试！"
             exit 1
         fi
     else
         apt-get update
         apt-get install --no-install-recommends -y gettext build-essential autoconf automake libtool openssl libssl-dev zlib1g-dev libpcre3-dev libev-dev libc-ares-dev
         if [ $? -ne 0 ]; then
-            echo -e "${red}[Error]${plain} Dependencies install failed, please try again!"
+            echo -e "${red}[错误]${plain} 依赖安装失败，请稍后重试！"
             exit 1
         fi
     fi
 }
 
-#Set firewall
+#设置防火墙
 function set_firewall() {
     if check_release centos; then
         if check_centos_main_version 6; then
@@ -310,25 +310,25 @@ function set_firewall() {
     fi
 }
 
-#Download
+#下载函数
 function download() {
     local filename=$1
 
     if [ -s ${filename} ]; then
-        echo -e "${green}[Info]${plain} ${filename} found."
+        echo -e "${green}[提示]${plain} ${filename} 已下载"
     else
-        echo -e "${green}[Info]${plain} ${filename} not found, start to download..."
+        echo -e "${green}[提示]${plain} ${filename} 未找到，开始下载"
         wget --no-check-certificate -c -t 3 -T 60 -O $1 $2
         if [ $? -eq 0 ]; then
-            echo -e "${green}[Info]${plain} ${filename} download complete."
+            echo -e "${green}[提示]${plain} ${filename} 下载完成"
         else
-            echo -e "${green}[Info]${plain} ${filename} download failed, please try again!"
+            echo -e "${red}[错误]${plain} ${filename} 下载失败，请稍后重试！"
             exit 1
         fi
     fi
 }
 
-#Install libsodium
+#安装libsodium
 function install_libsodium() {
     cd ${currentdir}
     if [ ! -f /usr/lib/libsodium.a ]; then
@@ -337,18 +337,18 @@ function install_libsodium() {
         cd ${libsodiumver}
         ./configure --prefix=/usr && make && make install
         if [ $? -ne 0 ]; then
-            echo -e "${red}[Error]${plain} ${libsodiumver} install failed, please try again!"
+            echo -e "${red}[错误]${plain} ${libsodiumver} 安装失败，请稍后重试！"
             exit 1
         fi
     else
-        echo -e "${green}[Info]${plain} ${libsodiumver} has been installed."
+        echo -e "${green}[提示]${plain} ${libsodiumver} 已安装"
     fi
 
     cd ${currentdir}
     rm -rf ${libsodiumver} ${libsodiumver}.tar.gz
 }
 
-#nstall mbedtls
+#安装mbedtls
 function install_mbedtls() {
     cd ${currentdir}
     if [ ! -f /usr/lib/libmbedtls.a ]; then
@@ -358,18 +358,18 @@ function install_mbedtls() {
         make SHARED=1 CFLAGS=-fPIC
         make DESTDIR=/usr install
         if [ $? -ne 0 ]; then
-            echo -e "${red}[Error]${plain} ${mbedtlsver} install failed, please try again!"
+            echo -e "${red}[错误]${plain} ${mbedtlsver} 安装失败，请稍后重试！"
             exit 1
         fi
     else
-        echo -e "${green}[Info]${plain} ${mbedtlsver} has been installed."
+        echo -e "${green}[提示]${plain} ${mbedtlsver} 已安装"
     fi
 
     cd ${currentdir}
     rm -rf ${mbedtlsver} ${mbedtlsver}-gpl.tgz
 }
 
-#Config shadowsocks
+#创建shadowsocks配置文件
 function config_shadowsocks() {
     if check_ipv6; then
         server_value="[\"[::0]\",\"0.0.0.0\"]"
@@ -402,7 +402,7 @@ function config_shadowsocks() {
 EOF
 }
 
-#Install shadowsocks
+#安装shadowsocks
 function install_shadowsocks() {
     ldconfig
     cd ${currentdir}
@@ -416,7 +416,7 @@ function install_shadowsocks() {
     ./configure --disable-documentation
     make && make install
     if [ $? -ne 0 ]; then
-        echo -e "${red}[Error]${plain} Shadowsocks install failed, please try again!"
+        echo -e "${red}[错误]${plain} Shadowsocks 安装失败，请稍后重试！"
         exit 1
     fi
     if [ ! -f /etc/init.d/shadowsocks ]; then
@@ -425,7 +425,7 @@ function install_shadowsocks() {
     chmod +x /etc/init.d/shadowsocks
     /etc/init.d/shadowsocks start
     if [ $? -ne 0 ]; then
-        echo -e "${red}[Error]${plain} Shadowsocks start failed, please try again!"
+        echo -e "${red}[错误]${plain} Shadowsocks 启动失败，请稍后重试！"
         exit 1
     fi
     if check_release centos; then
@@ -439,7 +439,7 @@ function install_shadowsocks() {
     rm -rf ${shadowsocksver} ${shadowsocksver}.tar.gz
 }
 
-#Uninstall shadowsocks
+#卸载shadowsocks
 function uninstall_shadowsocks() {
     ps -ef | grep -v "grep" | grep "ss-server" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
@@ -473,19 +473,19 @@ function uninstall_shadowsocks() {
     rm -f /root/shadowsocks.txt
 }
 
-#Install success
+#安装完成信息
 function install_success() {
     local ssurl=$(echo -n "${sscipher}:${sspassword}@$(get_ipv4):${ssport}" | base64 -w0)
     clear
-    echo -e "${green}[Info]${plain} Congratulations, Shadowsocks has been installed successfully."
-    echo -e "================================================="
-    echo -e "Server IP        : \033[41;37m $(get_ipv4) \033[0m"
-    echo -e "Server Port      : \033[41;37m ${ssport} \033[0m"
-    echo -e "Password         : \033[41;37m ${sspassword} \033[0m"
-    echo -e "Encryption Method: \033[41;37m ${sscipher} \033[0m"
-    echo -e "-------------------------------------------------"
+    echo -e "${green}[提示]${plain} Shadowsocks 安装成功，配置信息为"
+    echo -e "==============================================="
+    echo -e "服务器地址  : \033[41;37m $(get_ipv4) \033[0m"
+    echo -e "服务端口    : \033[41;37m ${ssport} \033[0m"
+    echo -e "连接密码    : \033[41;37m ${sspassword} \033[0m"
+    echo -e "加密方式    : \033[41;37m ${sscipher} \033[0m"
+    echo -e "-----------------------------------------------"
     echo -e "ss://${ssurl}"
-    echo -e "================================================="
+    echo -e "==============================================="
 
     cat > /root/shadowsocks.txt << EOF
 ===============================================
@@ -497,9 +497,13 @@ function install_success() {
 ss://${ssurl}
 ===============================================
 EOF
-    echo -e "You can find the config's backup in /root/shadowsocks.txt."
+    echo -e "配置信息已备份在 /root/shadowsocks.txt 文件内"
+    echo ""
+    echo -e "搬瓦工中文网（https://www.banwagongzw.com）、VULTR中文网（https://www.vultrcn.com）"
+    echo -e "站内教程多多，欢迎访问！"
 }
 
+#功能部分一
 install_main() {
     disable_selinux
     set_shadowsocks_config
@@ -512,56 +516,63 @@ install_main() {
     install_success
 }
 
+#功能部分二
 uninstall_main() {
     uninstall_shadowsocks
-    echo -e "${green}[Info]${plain} Shadowsocks uninstall successfully."
+    echo -e "${green}[提示]${plain} Shadowsocks 已成功卸载"
 }
 
+#功能部分三
 update_main() {
     if [[ ${updateornot} == "update" ]]; then
         ps -ef | grep -v grep | grep -i "ss-server" > /dev/null 2>&1
         [ $? -eq 0 ] && /etc/init.d/shadowsocks stop
         install_shadowsocks
-        echo -e "${green}[Info]${plain} Shadowsocks Update successfully."
+        echo -e "${green}[提示]${plain} Shadowsocks 更新成功"
     else
-        echo -e "${green}[Info]${plain} Latest version has been installed."
+        echo -e "${green}[提示]${plain} Shadowsocks 已安装最新版，无需更新"
     fi
 }
 
+#功能部分四
 start_main() {
     /etc/init.d/shadowsocks start
     if [ $? -eq 0 ]; then
-        echo -e "${green}[Info]${plain} Shadowsocks start successfully."
+        echo -e "${green}[提示]${plain} Shadowsocks 启动成功"
     else
-        echo -e "${red}[Error]${plain} Shadowsocks start failed, please try again!"
+        echo -e "${red}[错误]${plain} Shadowsocks 启动失败，请稍后重试！"
     fi
 }
 
+#功能部分五
 stop_main() {
     /etc/init.d/shadowsocks stop
     if [ $? -eq 0 ]; then
-        echo -e "${green}[Info]${plain} Shadowsocks start successfully."
+        echo -e "${green}[提示]${plain} Shadowsocks 停止成功"
     else
-        echo -e "${red}[Error]${plain} Shadowsocks stop failed, please try again!"
+        echo -e "${red}[错误]${plain} Shadowsocks 停止失败，请稍后重试！"
     fi
 }
 
+#功能部分六
 restart_main() {
     /etc/init.d/shadowsocks stop
     /etc/init.d/shadowsocks start
     if [ $? -eq 0 ]; then
-        echo -e "${green}[Info]${plain} Shadowsocks restart successfully."
+        echo -e "${green}[提示]${plain} Shadowsocks 重启成功"
     else
-        echo -e "${red}[Error]${plain} Shadowsocks restart failed, please try again!"
+        echo -e "${red}[错误]${plain} Shadowsocks 重启失败，请稍后重试！"
     fi
 }
 
+#功能部分七
 status_main() {
-    echo -e "${green}[Info]${plain} Congratulations, Shadowsocks has been installed successfully."
+    echo -e "${green}[提示]${plain} 当前 Shadowsocks 配置信息为"
     cat /root/shadowsocks.txt
-    echo "This information is just for reference. Please view the Shadowsocks configuration file."
+    echo "此信息仅供参考，具体请查看 Shadowsocks 配置文件"
 }
 
+#功能部分八
 modify_main() {
     set_shadowsocks_config
     /etc/init.d/shadowsocks stop
@@ -569,47 +580,48 @@ modify_main() {
     config_shadowsocks
     /etc/init.d/shadowsocks start
     install_success
+    echo ""
+    echo "若修改后无法生效，请尝试重启解决！"
 }
 
-#Main control
+#起始部分
 if [ $EUID -eq 0 ]; then
     if check_release centos || check_release debian || check_release ubuntu; then
         clear
-        echo "===================================="
-        echo "Shadowsocks Server Management Script"
-        echo " www.banwagongzw.com & vultrcn.com  "
-        echo "===================================="
-        echo " 1.Shadowsocks Server Install"
-        echo " 2.Shadowsocks Server Uninstall"
-        echo " 3.Shadowsocks Server Update"
-        echo "------------------------------------"
-        echo " 4.Shadowsocks Server Start"
-        echo " 5.Shadowsocks Server Stop"
-        echo " 6.Shadowsocks Server Restart"
-        echo "------------------------------------"
-        echo " 7.Shadowsocks Config Status"
-        echo " 8.Shadowsocks Config Modify"
-        echo "===================================="
+        echo "=================================="
+        echo " Shadowsocks 一键管理脚本（libev）"
+        echo "=================================="
+        echo " 1.安装 Shadowsocks 服务"
+        echo " 2.卸载 Shadowsocks 服务"
+        echo " 3.更新 Shadowsocks 服务"
+        echo "----------------------------------"
+        echo " 4.启动 Shadowsocks 服务"
+        echo " 5.停止 Shadowsocks 服务"
+        echo " 6.重启 Shadowsocks 服务"
+        echo "----------------------------------"
+        echo " 7.查看 Shadowsocks 配置"
+        echo " 8.修改 Shadowsocks 配置"
+        echo "=================================="
 
         check_shadowsocks_status
         if [[ ${installedornot} == "installed" ]]; then
             if [[ ${runningornot} == "running" ]]; then
                 if [[ ${updateornot} == "not" ]]; then
-                    echo -e "${green}Installed and Running${plain}"
+                    echo -e "${green}已安装且正在运行${plain}"
                 else
-                    echo -e "${green}Installed and Running, Update available${plain}"
+                    echo -e "${green}已安装且正在运行，版本可更新${plain}"
                 fi
             else
-                echo -e "${yellow}Installed but Not running${plain}"
+                echo -e "${yellow}已安装但未运行${plain}"
             fi
         else
-            echo -e "${red}Not installed${plain}"
+            echo -e "${red}尚未安装${plain}"
         fi
 
         while true
         do
             echo ""
-            read -p "Please Enter the Number:" choice
+            read -p "请输入相应功能前面的数字：" choice
             [[ -z ${choice} ]] && choice="0"
             expr ${choice} + 1 > /dev/null 2>&1
             if [ $? -eq 0 ]; then
@@ -633,17 +645,17 @@ if [ $EUID -eq 0 ]; then
                     fi
                     break
                 else
-                    echo -e "${red}[Error]${plain}  Please enter a number between 1 and 8!"
+                    echo -e "${red}[错误]${plain} 请输入 1 和 8 之间的数字！"
                 fi
             else
-                echo -e "${red}[Error]${plain}  Please enter a number between 1 and 8!"
+                echo -e "${red}[错误]${plain} 请输入 1 和 8 之间的数字！"
             fi
         done
     else
-        echo -e "${red}[Error]${plain} This script only support CentOS, Debian and Ubuntu!"
+        echo -e "${red}[错误]${plain} 本脚本只支持 CentOS、Debian 及 Ubuntu 系统！"
         exit 1
     fi
 else
-    echo -e "${red}[Error]${plain} This script need to run as root!"
+    echo -e "${red}[错误]${plain} 请以 root 用户身份运行此脚本！"
     exit 1
 fi
