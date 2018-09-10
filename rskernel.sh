@@ -72,27 +72,35 @@ check_centos_main_version(){
 #Main
 if check_system centos; then
     if check_centos_main_version 6; then
-        echo -e "${yellow}System OS is CentOS6. Processing...${plain}"
-        echo -e "-----------------------------------------"
-        rpm -ivh https://curls.fun/Resource/kernel-firmware-2.6.32-504.3.3.el6.noarch.rpm
-        rpm -ivh https://curls.fun/Resource/kernel-2.6.32-504.3.3.el6.x86_64.rpm --force
-        number=$(cat /boot/grub/grub.conf | awk '$1=="title" {print i++ " : " $NF}' | grep '2.6.32-504' | awk '{print $1}')
-        sed -i "s/^default=.*/default=$number/g" /boot/grub/grub.conf
-        echo -e "-----------------------------------------"
-        echo -e "${green}Success! Your server will reboot in 3s...${plain}"
-        sleep 3
-        reboot
+        echo -e "[${green}INFO${plain}] System OS is CentOS6. Processing..."
+        echo -e "-------------------------------------------"
+        rpm -ivh https://filedown.me/Linux/Kernel/kernel-firmware-2.6.32-504.3.3.el6.noarch.rpm
+        rpm -ivh https://filedown.me/Linux/Kernel/kernel-2.6.32-504.3.3.el6.x86_64.rpm --force
+        if [ $? -eq 0 ]; then
+            number=$(cat /boot/grub/grub.conf | awk '$1=="title" {print i++ " : " $NF}' | grep '2.6.32-504' | awk '{print $1}')
+            sed -i "s/^default=.*/default=$number/g" /boot/grub/grub.conf
+            echo -e "-------------------------------------------"
+            echo -e "[${green}INFO${plain}] Success! Your server will reboot in 3s..."
+            sleep 3
+            reboot
+        else
+            echo -e "[${red}ERROR${plain}] Change kernel failed!"
+        fi
     elif check_centos_main_version 7; then
-        echo -e "${yellow}System OS is CentOS7. Processing...${plain}"
-        echo -e "-----------------------------------------"
-        rpm -ivh https://curls.fun/Resource/kernel-3.10.0-229.1.2.el7.x86_64.rpm --force
-        grub2-set-default `awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg | grep '(3.10.0-229.1.2.el7.x86_64) 7 (Core)' | awk '{print $1}'`
-        echo -e "-----------------------------------------"
-        echo -e "${green}Success! Your server will reboot in 3s...${plain}"
-        sleep 3
-        reboot
+        echo -e "[${green}INFO${plain}] System OS is CentOS7. Processing..."
+        echo -e "-------------------------------------------"
+        rpm -ivh https://filedown.me/Linux/Kernel/kernel-3.10.0-229.1.2.el7.x86_64.rpm --force
+        if [ $? -eq 0 ]; then
+            grub2-set-default `awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg | grep '(3.10.0-229.1.2.el7.x86_64) 7 (Core)' | awk '{print $1}'`
+            echo -e "-------------------------------------------"
+            echo -e "[${green}INFO${plain}] Success! Your server will reboot in 3s..."
+            sleep 3
+            reboot
+        else
+            echo -e "[${red}ERROR${plain}] Change kernel failed!"
+        fi
     fi
 else
-    echo -e "${red}This script only support CentOS6/7!${plain}"
+    echo -e "[${yellow}WARNNING${plain}] This script only support CentOS6/7!"
 	exit 1
 fi
