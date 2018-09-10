@@ -33,7 +33,7 @@ mbedtlsver="mbedtls-2.11.0"
 mbedtlsurl="https://tls.mbed.org/download/mbedtls-2.11.0-gpl.tgz"
 shadowsocksver="shadowsocks-libev-3.2.0"
 shadowsocksurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.2.0/shadowsocks-libev-3.2.0.tar.gz"
-initscripturl="https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev"
+initscripturl="https://raw.githubusercontent.com/uxh/shadowsocks_bash/master/shadowsocks-libev"
 
 #禁用 SElinux
 function disable_selinux() {
