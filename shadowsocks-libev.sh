@@ -258,10 +258,6 @@ function install_dependencies() {
         command -v yum-config-manager > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             yum install -y yum-utils
-            if [ $? -ne 0 ]; then
-                echo -e "${red}[Error]${plain} YUM-UTILS install failed, please try again!"
-                exit 1
-            fi
         fi
         local epelstatus=$(yum-config-manager epel | grep -w "enabled" | cut -d " " -f 3)
         if [[ ${epelstatus} != "True" ]]; then
