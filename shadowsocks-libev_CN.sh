@@ -276,6 +276,7 @@ function install_dependencies() {
             exit 1
         fi
     fi
+    echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
 }
 
 #设置防火墙
