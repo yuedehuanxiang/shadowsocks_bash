@@ -52,7 +52,7 @@ function check_release() {
         release="centos"
     elif grep -qi "centos|red hat|redhat" /etc/issue; then
         release="centos"
-    elif grep -qi "debian" /etc/issue; then
+    elif grep -qi "debian|raspbian" /etc/issue; then
         release="debian"
     elif grep -qi "ubuntu" /etc/issue; then
         release="ubuntu"
@@ -95,7 +95,7 @@ function check_shadowsocks_status() {
             if [[ ${installedversion} != ${latestversion} ]]; then
                 updateornot="update"
                 shadowsocksnewver="shadowsocks-libev-${latestversion}"
-                shadowsocksnewurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/${ver}/${shadowsocks_libev_ver}.tar.gz"
+                shadowsocksnewurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${latestversion}/${shadowsocksnewver}.tar.gz"
             fi
         fi
     fi
@@ -405,11 +405,13 @@ function install_shadowsocks() {
     cd ${currentdir}
     if [[ ${updateornot} == "not" ]]; then
         download "${shadowsocksver}.tar.gz" "${shadowsocksurl}"
+        tar zxf ${shadowsocksver}.tar.gz
+        cd ${shadowsocksver}
     else
         download "${shadowsocksnewver}.tar.gz" "${shadowsocksnewurl}"
+        tar zxf ${shadowsocksnewver}.tar.gz
+        cd ${shadowsocksnewver}
     fi
-    tar zxf ${shadowsocksver}.tar.gz
-    cd ${shadowsocksver}
     ./configure --disable-documentation
     make && make install
     if [ $? -ne 0 ]; then
@@ -433,7 +435,11 @@ function install_shadowsocks() {
     fi
 
     cd ${currentdir}
-    rm -rf ${shadowsocksver} ${shadowsocksver}.tar.gz
+    if [[ ${updateornot} == "not" ]]; then
+        rm -rf ${shadowsocksver} ${shadowsocksver}.tar.gz
+    else
+        rm -rf ${shadowsocksnewver} ${shadowsocksnewver}.tar.gz
+    fi
 }
 
 #卸载shadowsocks
