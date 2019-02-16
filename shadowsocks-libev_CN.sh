@@ -31,8 +31,8 @@ libsodiumver="libsodium-1.0.17"
 libsodiumurl="https://github.com/jedisct1/libsodium/releases/download/1.0.17/libsodium-1.0.17.tar.gz"
 mbedtlsver="mbedtls-2.16.0"
 mbedtlsurl="https://tls.mbed.org/download/mbedtls-2.16.0-gpl.tgz"
-shadowsocksver="shadowsocks-libev-3.2.0"
-shadowsocksurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.2.0/shadowsocks-libev-3.2.0.tar.gz"
+shadowsocksver="shadowsocks-libev-3.2.3"
+shadowsocksurl="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.2.3/shadowsocks-libev-3.2.3.tar.gz"
 initscripturl="https://raw.githubusercontent.com/uxh/shadowsocks_bash/master/shadowsocks-libev"
 
 #禁用 SElinux
