@@ -298,8 +298,9 @@ function set_firewall() {
             if [ $? -eq 0 ]; then
                 firewall-cmd --query-port=${ssport}/tcp > /dev/null 2>&1
                 if [ $? -ne 0 ]; then
-                    firewall-cmd --permanent --zone=public --add-port=${ssport}/tcp
-                    firewall-cmd --permanent --zone=public --add-port=${ssport}/udp
+                    local default_zone=$(firewall-cmd --get-default-zone)
+                    firewall-cmd --permanent --zone=${default_zone} --add-port=${ssport}/tcp
+                    firewall-cmd --permanent --zone=${default_zone} --add-port=${ssport}/udp
                     firewall-cmd --reload
                 fi
             fi
