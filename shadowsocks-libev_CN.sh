@@ -27,8 +27,8 @@ rc4-md5
 )
 
 #环境及程序版本控制
-libsodiumver="libsodium-1.0.16"
-libsodiumurl="https://github.com/jedisct1/libsodium/releases/download/1.0.16/libsodium-1.0.16.tar.gz"
+libsodiumver="libsodium-1.0.17"
+libsodiumurl="https://github.com/jedisct1/libsodium/releases/download/1.0.17/libsodium-1.0.17.tar.gz"
 mbedtlsver="mbedtls-2.13.0"
 mbedtlsurl="https://tls.mbed.org/download/mbedtls-2.13.0-gpl.tgz"
 shadowsocksver="shadowsocks-libev-3.2.0"
